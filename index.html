@@ -320,7 +320,7 @@
     // Until you do, the form runs in "demo mode" and just shows the
     // data it WOULD send, so you can test the look on your phone.
     // ================================================================
-    const FLOW_URL = "";
+    const FLOW_URL = "https://defaultf56bf9bc4b0248db9c0c7f28495641.f2.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c5b83b1b922340d1b9c1bdb83607f8a0/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UVdMEdTnO0y0oW4_a_M0XTSca2XgLKbiqZYrh62aab4";
 
     const form = document.getElementById("aly-form");
     const statusEl = document.getElementById("status");
@@ -350,12 +350,13 @@
       showStatus("Sending…", "ok");
 
       try {
-        // text/plain avoids a browser "preflight" that can block the request
-        await fetch(FLOW_URL, {
+        // Power Automate supports CORS, so we post real JSON and read the result
+        const res = await fetch(FLOW_URL, {
           method: "POST",
-          headers: { "Content-Type": "text/plain" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
+        if (!res.ok) throw new Error("Server responded " + res.status);
         form.reset();
         showStatus("Thank you! Your trucking ticket was submitted. ✓", "ok");
       } catch (err) {
